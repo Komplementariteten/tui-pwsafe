@@ -89,7 +89,6 @@ impl<B: Backend> UiWidgetVm<B> for PasswordWidget {
             self.has_error = true;
             self.error = format!("Error in unlock pwsafe: {}", e);
         } else {
-            println!("unlocked");
             self.is_done = true;
         }
     }

@@ -147,13 +147,9 @@ impl<B: Backend> UiWidgetVm<B> for ContentList {
                         self.active_entry_name = Some(self.entries.items[pos].clone());
                     }
                 }
-                _ => {
-                    print!("uncaptured key-code: {:?}", key);
-                }
+                _ => {}
             },
-            _ => {
-                print!("uncaptured key: {:?}", key);
-            }
+            _ => {}
         };
     }
 

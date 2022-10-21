@@ -91,7 +91,7 @@ fn run_app<B: Backend>(
                     },
                     Mouse(mouse) => {
                         if mouse.kind == MouseEventKind::Down(MouseButton::Left) {
-                            print!("{:?}", mouse)
+                            // print!("{:?}", mouse)
                         }
                     }
                     _ => {}
