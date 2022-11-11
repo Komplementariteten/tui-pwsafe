@@ -239,6 +239,7 @@ impl<B: Backend> UiWidgetVm<B> for ContentList {
         let items_in_group = model.by_group_name(self.active_group_name.as_str());
         if self.select_group {
             self.entries.items = items_in_group.iter().map(|&e| e.title().unwrap()).collect();
+            self.entries.items.sort();
             self.entries.state.select(Some(0));
         }
         if let Some(name) = &self.active_entry_name {
