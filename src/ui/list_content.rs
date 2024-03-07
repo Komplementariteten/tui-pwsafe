@@ -6,7 +6,7 @@ use std::collections::HashSet;
 use tui::backend::Backend;
 use tui::layout::{Constraint, Direction, Layout, Rect};
 use tui::style::{Color, Modifier, Style};
-use tui::text::Spans;
+use tui::text::{Span, Spans};
 use tui::widgets::{Block, Borders, Clear, List, ListItem, ListState, Paragraph};
 use tui::Frame;
 
@@ -135,13 +135,16 @@ impl<B: Backend> UiWidgetVm<B> for ContentList {
                         }
                     }
                 }
+                KeyCode::Backspace => {
+                    self.search_text.pop();
+                }
                 KeyCode::Char(char) => {
                     self.search_text.push(char);
                     if let Some(pos) = self
                         .entries
                         .items
                         .iter()
-                        .position(|entry| entry.contains(&self.search_text))
+                        .position(|entry| entry.to_lowercase().starts_with(&self.search_text))
                     {
                         self.entries.state.select(Some(pos));
                         self.active_entry_name = Some(self.entries.items[pos].clone());
@@ -174,6 +177,11 @@ impl<B: Backend> UiWidgetVm<B> for ContentList {
             })
             .collect();
 
+        let left_block = Layout::default()
+            .direction(Direction::Vertical)
+            .constraints([Constraint::Percentage(90), Constraint::Percentage(10)])
+            .split(chunks[0]);
+
         let list = List::new(items)
             .block(Block::default().borders(Borders::ALL).title("Groups"))
             .highlight_style(
@@ -182,7 +190,17 @@ impl<B: Backend> UiWidgetVm<B> for ContentList {
                     .add_modifier(Modifier::BOLD),
             )
             .highlight_symbol(">> ");
-        f.render_stateful_widget(list, chunks[0], &mut self.groups.state);
+        f.render_stateful_widget(list, left_block[0], &mut self.groups.state);
+
+        let search_block = Paragraph::new(self.search_text.clone()).block(
+            Block::default()
+                .title(Span::styled(
+                    "search:",
+                    Style::default().fg(Color::White).bg(Color::Black),
+                ))
+                .borders(Borders::ALL),
+        );
+        f.render_widget(search_block, left_block[1]);
 
         // entries
         let items: Vec<ListItem> = self
